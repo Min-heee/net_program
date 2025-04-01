@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Mobius CO₂ 데이터 보기</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 30px;
+    }
+    #data {
+      font-size: 24px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>📡 Mobius CO₂ 최근 측정값</h1>
+  <div id="data">데이터를 불러오는 중...</div>
+
+  <script>
+    // 👉 본인의 컨테이너 경로에 맞게 수정해주세요
+    const mobiusUrl = "http://203.253.128.161:7579/Mobius/chan/co2/la"; // 예: AE가 FlutterAE, 컨테이너가 co2
+
+    fetch(mobiusUrl, {
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+        "X-M2M-Origin": "CAdmin",  // 관리 계정
+        "X-M2M-RI": "12345"
+      }
+    })
+    .then(response => response.json())
+    .then(json => {
+      const conValue = json["m2m:cin"]?.con;
+      if (conValue) {
+        document.getElementById("data").innerText = `📍 CO₂: ${conValue} ppm`;
+      } else {
+        document.getElementById("data").innerText = "❌ 데이터를 찾을 수 없습니다.";
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      document.getElementById("data").innerText = "❌ 데이터 로딩 실패!";
+    });
+  </script>
+</body>
+</html>
